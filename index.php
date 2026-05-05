@@ -5,7 +5,7 @@ http_response_code(200);
 // =====================
 // CONFIG
 // =====================
-$botToken = "YOUR_BOT_TOKEN";
+$botToken = "8651227813:AAHkYD2pFFS6uTogvpnLmCwry8cCLSxCKWg";
 $api = "https://api.telegram.org/bot".$botToken;
 
 // DB CONFIG (CHANGE THIS)
