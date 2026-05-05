@@ -29,11 +29,15 @@ if (isset($update["message"])) {
 
     // CURL (more reliable than file_get_contents)
     $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $website."/sendMessage");
-    curl_setopt($ch, CURLOPT_POST, 1);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, [
-        "chat_id" => $chatId,
-        "text" => $reply
+curl_setopt($ch, CURLOPT_URL, $api."/sendMessage");
+curl_setopt($ch, CURLOPT_POST, 1);
+curl_setopt($ch, CURLOPT_POSTFIELDS, [
+    "chat_id" => $chatId,
+    "text" => $reply
+]);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_exec($ch);
+curl_close($ch);
     ]);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_exec($ch);
