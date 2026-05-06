@@ -8,15 +8,17 @@ $api = "https://api.telegram.org/bot".$botToken;
 // =====================
 // SUPABASE CONNECTION
 // =====================
-$dsn = "pgsql:host=YOUR_HOST;port=5432;dbname=postgres";
+$dsn = "pgsql:host=db.hbflajkykuctaiyyeokf.supabase.co;port=5432;dbname=postgres";
 
 $user = "postgres";
-$pass = "YOUR_PASSWORD";
+$pass = "ventaxit5_yt";
 
 try {
     $conn = new PDO($dsn, $user, $pass);
+    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (PDOException $e) {
-    die("DB failed");
+    file_put_contents("error_log.txt", $e->getMessage());
+    exit;
 }
 
 // =====================
