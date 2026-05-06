@@ -2,36 +2,28 @@
 
 http_response_code(200);
 
-// =====================
-// CONFIG
-// =====================
 $botToken = "8651227813:AAHkYD2pFFS6uTogvpnLmCwry8cCLSxCKWg";
 $api = "https://api.telegram.org/bot".$botToken;
 
-// DB CONFIG (CHANGE THIS)
-$dbHost = "localhost";
-$dbUser = "DB_USER";
-$dbPass = "DB_PASS";
-$dbName = "DB_NAME";
-
 // =====================
-// CONNECT DB
+// SUPABASE CONNECTION
 // =====================
-$conn = new mysqli($dbHost, $dbUser, $dbPass, $dbName);
+$dsn = "pgsql:host=YOUR_HOST;port=5432;dbname=postgres";
 
-if ($conn->connect_error) {
-    die("DB connection failed");
+$user = "postgres";
+$pass = "YOUR_PASSWORD";
+
+try {
+    $conn = new PDO($dsn, $user, $pass);
+} catch (PDOException $e) {
+    die("DB failed");
 }
 
 // =====================
-// GET UPDATE
+// GET TELEGRAM UPDATE
 // =====================
 $update = json_decode(file_get_contents("php://input"), true);
 
-// optional log (for debugging)
-file_put_contents("debug.txt", json_encode($update) . PHP_EOL, FILE_APPEND);
-
-// must be message
 if (!isset($update["message"])) exit;
 
 $chatId = $update["message"]["chat"]["id"];
@@ -39,25 +31,22 @@ $username = $update["message"]["from"]["username"] ?? "anon";
 $text = $update["message"]["text"] ?? "";
 
 // =====================
-// SAVE QUESTION TO DB
+// SAVE QUESTION
 // =====================
 $stmt = $conn->prepare("INSERT INTO questions (user_id, username, question) VALUES (?, ?, ?)");
-$stmt->bind_param("iss", $chatId, $username, $text);
-$stmt->execute();
+$stmt->execute([$chatId, $username, $text]);
 
 // =====================
-// BOT RESPONSE LOGIC
+// RESPONSE
 // =====================
 if ($text == "/start") {
-    $reply = "👋 Welcome to AskMate!\nSend any question and it will be posted.";
-} elseif ($text == "/help") {
-    $reply = "💡 Just send a question and it will be saved.";
+    $reply = "👋 Welcome to AskMate!";
 } else {
-    $reply = "✅ Your question has been posted!";
+    $reply = "✅ Question saved!";
 }
 
 // =====================
-// SEND MESSAGE (cURL)
+// SEND MESSAGE
 // =====================
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_URL, $api."/sendMessage");
