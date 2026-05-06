@@ -2,5 +2,6 @@
 
 file_put_contents("hit.log", date("c") . " HIT\n", FILE_APPEND);
 
-// respond to Telegram immediately
+// Return something Telegram can see
+header("Content-Type: text/plain");
 echo "OK";
